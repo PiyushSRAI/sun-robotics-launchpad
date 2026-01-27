@@ -1,0 +1,163 @@
+import { motion } from "framer-motion";
+import { Bot, Github, Linkedin, Twitter } from "lucide-react";
+
+const footerLinks = {
+  solutions: [
+    { name: "Industrial Robotics", href: "#industrial" },
+    { name: "IT Solutions", href: "#it-solutions" },
+    { name: "AI Systems", href: "#ai-brain" },
+    { name: "Products", href: "#products" },
+  ],
+  company: [
+    { name: "About Us", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Blog", href: "#" },
+    { name: "Contact", href: "#contact" },
+  ],
+  legal: [
+    { name: "Privacy Policy", href: "#" },
+    { name: "Terms of Service", href: "#" },
+    { name: "Cookie Policy", href: "#" },
+  ],
+};
+
+const socialLinks = [
+  { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com" },
+  { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
+  { name: "GitHub", icon: Github, href: "https://github.com" },
+];
+
+export const Footer = () => {
+  const scrollToSection = (href: string) => {
+    if (href.startsWith("#")) {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  return (
+    <footer className="relative pt-24 pb-8 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-t from-muted/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+          {/* Brand */}
+          <div className="lg:col-span-2">
+            <motion.a
+              href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection("#home");
+              }}
+              className="flex items-center gap-2 mb-6 group"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
+                <Bot className="w-6 h-6 text-primary" />
+              </div>
+              <span className="text-xl font-display font-bold text-foreground">
+                Sun <span className="neon-text">Robotics</span> & AI
+              </span>
+            </motion.a>
+            <p className="text-muted-foreground mb-6 max-w-sm">
+              Building the future of industrial automation with cutting-edge AI
+              and robotics solutions for enterprises worldwide.
+            </p>
+            <div className="flex gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-lg glass flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">
+              Solutions
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.solutions.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(link.href);
+                    }}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">
+              Company
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.company.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      if (link.href.startsWith("#")) {
+                        e.preventDefault();
+                        scrollToSection(link.href);
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">
+              Legal
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.legal.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            © 2026 Sun Robotics & AI. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Crafted with precision in Indore, India 🇮🇳
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
