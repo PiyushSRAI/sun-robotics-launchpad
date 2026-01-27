@@ -1,18 +1,19 @@
 import { motion } from "framer-motion";
 import { Bot, Github, Linkedin, Twitter } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const footerLinks = {
   solutions: [
-    { name: "Industrial Robotics", href: "#industrial" },
-    { name: "IT Solutions", href: "#it-solutions" },
-    { name: "AI Systems", href: "#ai-brain" },
-    { name: "Products", href: "#products" },
+    { name: "Industrial Robotics", href: "/robotics#industrial" },
+    { name: "IT Solutions", href: "/it-solutions" },
+    { name: "AI Systems", href: "/robotics#ai-brain" },
+    { name: "Products", href: "/products" },
   ],
   company: [
     { name: "About Us", href: "#" },
     { name: "Careers", href: "#" },
     { name: "Blog", href: "#" },
-    { name: "Contact", href: "#contact" },
+    { name: "Contact", href: "/contact" },
   ],
   legal: [
     { name: "Privacy Policy", href: "#" },
@@ -28,12 +29,23 @@ const socialLinks = [
 ];
 
 export const Footer = () => {
-  const scrollToSection = (href: string) => {
-    if (href.startsWith("#")) {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+  const navigate = useNavigate();
+
+  const handleNavigation = (href: string) => {
+    if (href.startsWith("#")) return;
+    
+    if (href.includes("#")) {
+      const [path, hash] = href.split("#");
+      navigate(path);
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      navigate(href);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -47,22 +59,20 @@ export const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <motion.a
-              href="#home"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("#home");
-              }}
+            <Link
+              to="/"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="flex items-center gap-2 mb-6 group"
-              whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
-                <Bot className="w-6 h-6 text-primary" />
-              </div>
-              <span className="text-xl font-display font-bold text-foreground">
-                Sun <span className="neon-text">Robotics</span> & AI
-              </span>
-            </motion.a>
+              <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
+                  <Bot className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-xl font-display font-bold text-foreground">
+                  Sun <span className="neon-text">Robotics</span> & AI
+                </span>
+              </motion.div>
+            </Link>
             <p className="text-muted-foreground mb-6 max-w-sm">
               Building the future of industrial automation with cutting-edge AI
               and robotics solutions for enterprises worldwide.
@@ -90,16 +100,12 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.solutions.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection(link.href);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors"
+                  <button
+                    onClick={() => handleNavigation(link.href)}
+                    className="text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -112,18 +118,21 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      if (link.href.startsWith("#")) {
-                        e.preventDefault();
-                        scrollToSection(link.href);
-                      }
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </a>
+                  {link.href.startsWith("#") ? (
+                    <a
+                      href={link.href}
+                      className="text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.name}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => handleNavigation(link.href)}
+                      className="text-muted-foreground hover:text-primary transition-colors text-left"
+                    >
+                      {link.name}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

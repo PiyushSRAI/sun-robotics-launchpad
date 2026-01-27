@@ -1,14 +1,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const Hero = () => {
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <section
@@ -80,7 +76,7 @@ export const Hero = () => {
           >
             <Button
               size="lg"
-              onClick={() => scrollToSection("#products")}
+              onClick={() => navigate("/products")}
               className="glow-button bg-primary text-primary-foreground hover:bg-primary/90 text-base px-8 py-6"
             >
               Explore Solutions
@@ -89,7 +85,7 @@ export const Hero = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => scrollToSection("#contact")}
+              onClick={() => navigate("/contact")}
               className="glass border-white/20 hover:bg-white/10 text-foreground text-base px-8 py-6"
             >
               <Play className="mr-2 w-5 h-5" />

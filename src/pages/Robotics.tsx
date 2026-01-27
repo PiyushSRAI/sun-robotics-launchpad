@@ -1,0 +1,58 @@
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { IndustrialRobotics } from "@/components/IndustrialRobotics";
+import { AIBrain } from "@/components/AIBrain";
+import { MultipurposeRobotics } from "@/components/MultipurposeRobotics";
+import { CTABanner } from "@/components/CTABanner";
+
+const Robotics = () => {
+  const headerRef = useRef(null);
+  const isInView = useInView(headerRef, { once: true });
+
+  return (
+    <>
+      {/* Page Header */}
+      <section className="pt-32 pb-16 relative overflow-hidden" ref={headerRef}>
+        <div className="absolute inset-0 hero-gradient" />
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        
+        {/* Animated Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] animate-pulse-slow" />
+        
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <span className="text-primary text-sm font-semibold tracking-wider uppercase">
+              Robotics Solutions
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mt-4 mb-6">
+              Next-Generation <span className="neon-text">Robotics</span>
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+              From heavy-duty industrial arms to intelligent multipurpose platforms, 
+              our robotics solutions are engineered for peak performance and reliability.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Industrial Robotics Section */}
+      <IndustrialRobotics />
+
+      {/* AI Brain Section */}
+      <AIBrain />
+
+      {/* Multipurpose Robotics Section */}
+      <MultipurposeRobotics />
+
+      {/* CTA */}
+      <CTABanner />
+    </>
+  );
+};
+
+export default Robotics;
