@@ -16,15 +16,15 @@ const footerLinks: Record<string, FooterLink[]> = {
     { name: "Products", href: "/products" },
   ],
   company: [
-    { name: "About Us", href: "#" },
-    { name: "Careers", href: "#" },
-    { name: "Blog", href: "#" },
+    { name: "About Us", href: "/about" },
+    { name: "Careers", href: "/careers" },
+    { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
-    { name: "Cookie Policy", href: "#" },
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+    { name: "Cookie Policy", href: "/privacy" },
   ],
 };
 
@@ -34,21 +34,12 @@ const socialLinks = [
   { name: "GitHub", icon: Github, href: "https://github.com" },
 ];
 
-// Helper to determine if link has hash and is not just "#"
-const isInternalHashLink = (href: string) => href.includes("#") && href !== "#" && !href.startsWith("#");
-const isPlaceholderLink = (href: string) => href === "#" || href.startsWith("#");
+// Helper to determine if link has hash
+const isInternalHashLink = (href: string) => href.includes("#");
 
 // Render a footer navigation link
 const FooterNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const className = "text-muted-foreground hover:text-primary transition-colors";
-
-  if (isPlaceholderLink(href)) {
-    return (
-      <span className={`${className} cursor-not-allowed opacity-50`}>
-        {children}
-      </span>
-    );
-  }
 
   if (isInternalHashLink(href)) {
     return (

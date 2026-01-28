@@ -24,6 +24,7 @@ const navLinks: NavItem[] = [
   },
   { name: "IT Solutions", href: "/it-solutions" },
   { name: "Products", href: "/products" },
+  { name: "Careers", href: "/careers" },
   { name: "Contact", href: "/contact" },
 ];
 
