@@ -1,8 +1,14 @@
 import { motion } from "framer-motion";
 import { Bot, Github, Linkedin, Twitter } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 
-const footerLinks = {
+interface FooterLink {
+  name: string;
+  href: string;
+}
+
+const footerLinks: Record<string, FooterLink[]> = {
   solutions: [
     { name: "Industrial Robotics", href: "/robotics#industrial" },
     { name: "IT Solutions", href: "/it-solutions" },
@@ -28,27 +34,38 @@ const socialLinks = [
   { name: "GitHub", icon: Github, href: "https://github.com" },
 ];
 
+// Helper to determine if link has hash and is not just "#"
+const isInternalHashLink = (href: string) => href.includes("#") && href !== "#" && !href.startsWith("#");
+const isPlaceholderLink = (href: string) => href === "#" || href.startsWith("#");
+
+// Render a footer navigation link
+const FooterNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+  const className = "text-muted-foreground hover:text-primary transition-colors";
+
+  if (isPlaceholderLink(href)) {
+    return (
+      <span className={`${className} cursor-not-allowed opacity-50`}>
+        {children}
+      </span>
+    );
+  }
+
+  if (isInternalHashLink(href)) {
+    return (
+      <HashLink to={href} smooth className={className}>
+        {children}
+      </HashLink>
+    );
+  }
+
+  return (
+    <Link to={href} className={className}>
+      {children}
+    </Link>
+  );
+};
+
 export const Footer = () => {
-  const navigate = useNavigate();
-
-  const handleNavigation = (href: string) => {
-    if (href.startsWith("#")) return;
-    
-    if (href.includes("#")) {
-      const [path, hash] = href.split("#");
-      navigate(path);
-      setTimeout(() => {
-        const element = document.getElementById(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-    } else {
-      navigate(href);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
   return (
     <footer className="relative pt-24 pb-8 overflow-hidden">
       {/* Background */}
@@ -59,11 +76,7 @@ export const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link
-              to="/"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-2 mb-6 group"
-            >
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
               <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
                   <Bot className="w-6 h-6 text-primary" />
@@ -84,6 +97,7 @@ export const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Visit our ${social.name} page`}
                   className="w-10 h-10 rounded-lg glass flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
                 >
                   <social.icon className="w-5 h-5" />
@@ -92,7 +106,7 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
+          {/* Solutions Links */}
           <div>
             <h4 className="font-display font-semibold text-foreground mb-4">
               Solutions
@@ -100,17 +114,13 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.solutions.map((link) => (
                 <li key={link.name}>
-                  <button
-                    onClick={() => handleNavigation(link.href)}
-                    className="text-muted-foreground hover:text-primary transition-colors text-left"
-                  >
-                    {link.name}
-                  </button>
+                  <FooterNavLink href={link.href}>{link.name}</FooterNavLink>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Company Links */}
           <div>
             <h4 className="font-display font-semibold text-foreground mb-4">
               Company
@@ -118,26 +128,13 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  {link.href.startsWith("#") ? (
-                    <a
-                      href={link.href}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {link.name}
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => handleNavigation(link.href)}
-                      className="text-muted-foreground hover:text-primary transition-colors text-left"
-                    >
-                      {link.name}
-                    </button>
-                  )}
+                  <FooterNavLink href={link.href}>{link.name}</FooterNavLink>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Legal Links */}
           <div>
             <h4 className="font-display font-semibold text-foreground mb-4">
               Legal
@@ -145,12 +142,7 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </a>
+                  <FooterNavLink href={link.href}>{link.name}</FooterNavLink>
                 </li>
               ))}
             </ul>

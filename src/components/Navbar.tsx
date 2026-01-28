@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown, Bot } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 import { Button } from "@/components/ui/button";
+import { useScrolled } from "@/hooks/useScrolled";
 
-const navLinks = [
+interface NavItem {
+  name: string;
+  href: string;
+  dropdown?: { name: string; href: string }[];
+}
+
+const navLinks: NavItem[] = [
   { name: "Home", href: "/" },
   {
     name: "Robotics",
@@ -20,57 +28,59 @@ const navLinks = [
 ];
 
 export const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScrolled(50);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  const handleNavigation = (href: string) => {
-    setIsMobileMenuOpen(false);
     setActiveDropdown(null);
-
-    // Check if href contains a hash
-    if (href.includes("#")) {
-      const [path, hash] = href.split("#");
-      if (location.pathname === path || (path === "" && location.pathname === "/")) {
-        // Same page, just scroll
-        const element = document.getElementById(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      } else {
-        // Navigate to page then scroll
-        navigate(path || "/");
-        setTimeout(() => {
-          const element = document.getElementById(hash);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 100);
-      }
-    } else {
-      navigate(href);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
+  }, [location.pathname, location.hash]);
 
   const isActive = (href: string) => {
-    if (href === "/") return location.pathname === "/";
-    return location.pathname.startsWith(href.split("#")[0]);
+    const basePath = href.split("#")[0];
+    if (basePath === "/") return location.pathname === "/";
+    return location.pathname.startsWith(basePath);
+  };
+
+  const toggleDropdown = (name: string) => {
+    setActiveDropdown((prev) => (prev === name ? null : name));
+  };
+
+  // Helper to determine if link has hash
+  const isHashLink = (href: string) => href.includes("#");
+
+  // Render a navigation link (either Link or HashLink)
+  const renderNavLink = (
+    href: string,
+    children: React.ReactNode,
+    className: string,
+    onClick?: () => void
+  ) => {
+    const commonProps = {
+      className,
+      onClick: () => {
+        onClick?.();
+        setIsMobileMenuOpen(false);
+        setActiveDropdown(null);
+      },
+    };
+
+    if (isHashLink(href)) {
+      return (
+        <HashLink to={href} smooth {...commonProps}>
+          {children}
+        </HashLink>
+      );
+    }
+
+    return (
+      <Link to={href} {...commonProps}>
+        {children}
+      </Link>
+    );
   };
 
   return (
@@ -85,11 +95,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2 group"
-          >
+          <Link to="/" className="flex items-center gap-2 group">
             <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
                 <Bot className="w-6 h-6 text-primary" />
@@ -109,25 +115,39 @@ export const Navbar = () => {
                 onMouseEnter={() => link.dropdown && setActiveDropdown(link.name)}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button
-                  onClick={() => handleNavigation(link.href)}
-                  className={`flex items-center gap-1 text-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {link.name}
-                  {link.dropdown && (
+                {link.dropdown ? (
+                  // Dropdown trigger button
+                  <button
+                    onClick={() => toggleDropdown(link.name)}
+                    aria-expanded={activeDropdown === link.name}
+                    aria-haspopup="true"
+                    className={`flex items-center gap-1 text-sm font-medium transition-colors cursor-pointer ${
+                      isActive(link.href)
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {link.name}
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
                         activeDropdown === link.name ? "rotate-180" : ""
                       }`}
                     />
-                  )}
-                </button>
+                  </button>
+                ) : (
+                  // Regular link
+                  renderNavLink(
+                    link.href,
+                    link.name,
+                    `text-sm font-medium transition-colors ${
+                      isActive(link.href)
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  )
+                )}
 
-                {/* Dropdown */}
+                {/* Dropdown Menu */}
                 <AnimatePresence>
                   {link.dropdown && activeDropdown === link.name && (
                     <motion.div
@@ -135,17 +155,17 @@ export const Navbar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-2 w-48 glass-card p-2"
+                      role="menu"
+                      aria-label={`${link.name} submenu`}
+                      className="absolute top-full left-0 mt-2 w-48 glass-card p-2 bg-background/95 backdrop-blur-xl"
                     >
-                      {link.dropdown.map((item) => (
-                        <button
-                          key={item.name}
-                          onClick={() => handleNavigation(item.href)}
-                          className="block w-full text-left px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
-                        >
-                          {item.name}
-                        </button>
-                      ))}
+                      {link.dropdown.map((item) =>
+                        renderNavLink(
+                          item.href,
+                          item.name,
+                          "block w-full text-left px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
+                        )
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -155,18 +175,17 @@ export const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <Button
-              onClick={() => handleNavigation("/contact")}
-              className="glow-button bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Get a Quote
+            <Button asChild className="glow-button bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link to="/contact">Get a Quote</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-foreground"
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-foreground cursor-pointer"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -181,59 +200,66 @@ export const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden glass mt-2 mx-4 rounded-xl overflow-hidden"
+            className="lg:hidden glass mt-2 mx-4 rounded-xl overflow-hidden bg-background/95 backdrop-blur-xl"
           >
             <div className="p-4 space-y-2">
               {navLinks.map((link) => (
                 <div key={link.name}>
-                  <button
-                    onClick={() => {
-                      if (link.dropdown) {
-                        setActiveDropdown(activeDropdown === link.name ? null : link.name);
-                      } else {
-                        handleNavigation(link.href);
-                      }
-                    }}
-                    className={`flex items-center justify-between w-full py-3 ${
-                      isActive(link.href) ? "text-primary" : "text-foreground"
-                    }`}
-                  >
-                    {link.name}
-                    {link.dropdown && (
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          activeDropdown === link.name ? "rotate-180" : ""
+                  {link.dropdown ? (
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(link.name)}
+                        aria-expanded={activeDropdown === link.name}
+                        aria-haspopup="true"
+                        className={`flex items-center justify-between w-full py-3 cursor-pointer ${
+                          isActive(link.href) ? "text-primary" : "text-foreground"
                         }`}
-                      />
-                    )}
-                  </button>
-                  <AnimatePresence>
-                    {link.dropdown && activeDropdown === link.name && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-4 space-y-1"
                       >
-                        {link.dropdown.map((item) => (
-                          <button
-                            key={item.name}
-                            onClick={() => handleNavigation(item.href)}
-                            className="block w-full text-left py-2 text-sm text-muted-foreground hover:text-foreground"
+                        {link.name}
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform ${
+                            activeDropdown === link.name ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {activeDropdown === link.name && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            role="menu"
+                            className="pl-4 space-y-1"
                           >
-                            {item.name}
-                          </button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                            {link.dropdown.map((item) =>
+                              renderNavLink(
+                                item.href,
+                                item.name,
+                                "block w-full text-left py-2 text-sm text-muted-foreground hover:text-foreground"
+                              )
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    renderNavLink(
+                      link.href,
+                      link.name,
+                      `block w-full text-left py-3 ${
+                        isActive(link.href) ? "text-primary" : "text-foreground"
+                      }`
+                    )
+                  )}
                 </div>
               ))}
               <Button
-                onClick={() => handleNavigation("/contact")}
+                asChild
                 className="w-full mt-4 glow-button bg-primary text-primary-foreground"
               >
-                Get a Quote
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  Get a Quote
+                </Link>
               </Button>
             </div>
           </motion.div>
