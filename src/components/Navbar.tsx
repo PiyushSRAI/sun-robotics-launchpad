@@ -96,11 +96,17 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
+
           <Link to="/" className="flex items-center gap-2 group">
             <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
-                <Bot className="w-6 h-6 text-primary" />
-              </div>
+              {/*<div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">*/}
+                {/*<Bot className="w-6 h-6 text-primary" />*/}
+                  <img
+                      src="/logo.png"
+                      alt="Sun Robotics Logo"
+                      className="h-10 w-auto transition-transform duration-300 group-hover:scale-110"
+                  />
+              {/*</div>*/}
               <span className="text-xl font-display font-bold text-foreground">
                 Sun <span className="neon-text">Robotics</span> & AI
               </span>

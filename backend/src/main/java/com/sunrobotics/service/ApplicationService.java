@@ -6,7 +6,9 @@ import com.sunrobotics.model.Job;
 import com.sunrobotics.repository.ApplicationRepository;
 import com.sunrobotics.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class ApplicationService {
@@ -28,6 +30,20 @@ public class ApplicationService {
         app.setResumeUrl(dto.getResumeUrl());
         app.setCoverLetter(dto.getCoverLetter());
 
+        return applicationRepository.save(app);
+    }
+
+    // --- ADMIN METHODS ---
+
+    public List<Application> getAllApplications() {
+        // Returns applications sorted by newest first
+        return applicationRepository.findAll(Sort.by(Sort.Direction.DESC, "appliedAt"));
+    }
+
+    public Application updateApplicationStatus(Long id, String status) {
+        Application app = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+        app.setStatus(status);
         return applicationRepository.save(app);
     }
 }

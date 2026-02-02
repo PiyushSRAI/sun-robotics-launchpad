@@ -4,7 +4,9 @@ import com.sunrobotics.dto.ContactMessageDto;
 import com.sunrobotics.model.ContactMessage;
 import com.sunrobotics.repository.ContactMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class ContactService {
@@ -20,5 +22,22 @@ public class ContactService {
         msg.setSubject(dto.getSubject());
         msg.setMessage(dto.getMessage());
         return repository.save(msg);
+    }
+
+    // --- ADMIN METHODS ---
+
+    public List<ContactMessage> getAllMessages() {
+        return repository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    public ContactMessage markAsRead(Long id) {
+        ContactMessage msg = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        msg.setRead(true);
+        return repository.save(msg);
+    }
+
+    public void deleteMessage(Long id) {
+        repository.deleteById(id);
     }
 }

@@ -69,9 +69,11 @@ export const Footer = () => {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6 group">
               <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
-                  <Bot className="w-6 h-6 text-primary" />
-                </div>
+                  <img
+                      src="/logo.png"
+                      alt="Sun Robotics Logo"
+                      className="h-10 w-auto transition-transform duration-300 group-hover:scale-110"
+                  />
                 <span className="text-xl font-display font-bold text-foreground">
                   Sun <span className="neon-text">Robotics</span> & AI
                 </span>
