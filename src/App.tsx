@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Robotics from "./pages/Robotics";
 import ITSolutionsPage from "./pages/ITSolutionsPage";
@@ -48,6 +49,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+                <ScrollToTop />
                 <Routes>
                     {/* --- PUBLIC ROUTES (Wrapped in PublicLayout) --- */}
                     <Route element={<PublicLayout />}>

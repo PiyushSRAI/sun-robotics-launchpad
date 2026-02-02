@@ -1,6 +1,7 @@
+//
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { MapPin, Clock, Briefcase, Send, Loader2 } from "lucide-react";
+import { MapPin, Clock, Briefcase, Send, Loader2, Info, CheckCircle, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +14,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
+    DialogFooter,
 } from "@/components/ui/dialog";
 import {
     Form,
@@ -67,7 +69,11 @@ const Careers = () => {
 
     const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // State to manage Modal visibility
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+    const [isApplyOpen, setIsApplyOpen] = useState(false);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Fetch jobs from backend on mount
@@ -75,7 +81,8 @@ const Careers = () => {
         const fetchJobs = async () => {
             try {
                 const data = await api.getJobs();
-                setJobs(data);
+                // Filter only active jobs
+                setJobs(data.filter((j) => j.active));
             } catch (error) {
                 console.error("Failed to fetch jobs:", error);
                 toast.error("Could not load open positions. Is the backend running?");
@@ -97,13 +104,25 @@ const Careers = () => {
         },
     });
 
+    // Handle opening the modals
+    const openApply = (job: Job) => {
+        setSelectedJob(job);
+        setIsDetailsOpen(false); // Close details if open
+        setIsApplyOpen(true);
+    };
+
+    const openDetails = (job: Job) => {
+        setSelectedJob(job);
+        setIsDetailsOpen(true);
+    };
+
     const handleApply = async (data: ApplicationFormData) => {
         if (!selectedJob) return;
         setIsSubmitting(true);
 
         try {
             await api.applyForJob({
-                jobId: selectedJob.id,
+                jobId: selectedJob.id!, // Ensure ID exists
                 fullName: data.fullName,
                 email: data.email,
                 phone: data.phone || "",
@@ -115,6 +134,7 @@ const Careers = () => {
                 `Application submitted for ${selectedJob.title}! We'll be in touch soon.`
             );
             form.reset();
+            setIsApplyOpen(false);
             setSelectedJob(null);
         } catch (error: any) {
             console.error(error);
@@ -124,7 +144,7 @@ const Careers = () => {
         }
     };
 
-    // Helper to parse requirements (DB stores them as a string, e.g. "Java, Spring, SQL")
+    // Helper to parse requirements
     const getRequirementsCount = (reqs: string) => {
         if (!reqs) return 0;
         return reqs.split(',').length;
@@ -150,9 +170,9 @@ const Careers = () => {
                         transition={{ duration: 0.6 }}
                         className="text-center max-w-4xl mx-auto"
                     >
-            <span className="text-primary text-sm font-semibold tracking-wider uppercase">
-              Careers
-            </span>
+                        <span className="text-primary text-sm font-semibold tracking-wider uppercase">
+                            Careers
+                        </span>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mt-4 mb-6">
                             Join the <span className="gradient-text">Revolution</span>
                         </h1>
@@ -189,54 +209,58 @@ const Careers = () => {
                         </div>
                     ) : jobs.length === 0 ? (
                         <div className="text-center py-20 glass-card max-w-2xl mx-auto rounded-xl">
+                            <Briefcase className="w-12 h-12 mx-auto mb-4 opacity-50" />
                             <p className="text-muted-foreground">No open positions at the moment. Please check back later.</p>
                         </div>
                     ) : (
-                        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
                             {jobs.map((job, index) => (
                                 <motion.div
                                     key={job.id}
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={isJobsInView ? { opacity: 1, y: 0 } : {}}
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    className="glass-card p-6 md:p-8 glow-card group"
+                                    className="glass-card p-6 flex flex-col glow-card group"
                                 >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div>
-                      <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-                        {job.department}
-                      </span>
-                                            <h3 className="text-xl font-display font-bold text-foreground mt-1">
-                                                {job.title}
-                                            </h3>
-                                        </div>
+                                    <div className="mb-4">
+                                        <span className="text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 px-2 py-1 rounded-full">
+                                            {job.department}
+                                        </span>
+                                        <h3 className="text-xl font-display font-bold text-foreground mt-3">
+                                            {job.title}
+                                        </h3>
                                     </div>
 
-                                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-3">
+                                    <div className="flex flex-wrap gap-3 mb-4 text-sm text-muted-foreground">
+                                        <span className="flex items-center gap-1">
+                                            <MapPin className="w-3 h-3 text-primary" />
+                                            {job.location}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <Clock className="w-3 h-3 text-primary" />
+                                            {job.type}
+                                        </span>
+                                    </div>
+
+                                    <p className="text-muted-foreground text-sm mb-6 leading-relaxed line-clamp-3 flex-grow">
                                         {job.description}
                                     </p>
 
-                                    <div className="flex flex-wrap gap-3 mb-6 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4 text-primary" />
-                        {job.location}
-                    </span>
-                                        <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-primary" />
-                                            {job.type}
-                    </span>
-                                        <span className="flex items-center gap-1">
-                      <Briefcase className="w-4 h-4 text-primary" />
-                                            {getRequirementsCount(job.requirements)} Key Skills
-                    </span>
+                                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => openDetails(job)}
+                                            className="w-full"
+                                        >
+                                            <Info className="w-4 h-4 mr-2" /> Details
+                                        </Button>
+                                        <Button
+                                            onClick={() => openApply(job)}
+                                            className="w-full glow-button bg-primary text-primary-foreground hover:bg-primary/90"
+                                        >
+                                            Apply <ArrowRight className="w-4 h-4 ml-2" />
+                                        </Button>
                                     </div>
-
-                                    <Button
-                                        onClick={() => setSelectedJob(job)}
-                                        className="w-full glow-button bg-primary text-primary-foreground hover:bg-primary/90"
-                                    >
-                                        Apply Now
-                                    </Button>
                                 </motion.div>
                             ))}
                         </div>
@@ -244,9 +268,49 @@ const Careers = () => {
                 </div>
             </section>
 
-            {/* Application Modal */}
-            <Dialog open={!!selectedJob} onOpenChange={(open) => !open && setSelectedJob(null)}>
-                <DialogContent className="glass-card bg-background/95 backdrop-blur-xl border-border max-w-lg">
+            {/* --- JOB DETAILS MODAL --- */}
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <DialogContent className="glass-card bg-background/95 backdrop-blur-xl border-border max-w-2xl max-h-[85vh] overflow-y-auto">
+                    {selectedJob && (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl font-display">{selectedJob.title}</DialogTitle>
+                                <DialogDescription>
+                                    {selectedJob.department} • {selectedJob.location} • {selectedJob.type}
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="space-y-6 py-4">
+                                <div>
+                                    <h4 className="text-lg font-semibold mb-2">About the Role</h4>
+                                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                                        {selectedJob.description}
+                                    </p>
+                                </div>
+
+                                <div className="bg-muted/30 p-4 rounded-lg border">
+                                    <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                        <CheckCircle className="w-5 h-5 text-primary" />
+                                        Key Skills & Requirements
+                                    </h4>
+                                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                                        {selectedJob.requirements || "No specific requirements listed."}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <DialogFooter className="gap-2 sm:gap-0">
+                                <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>Close</Button>
+                                <Button className="glow-button" onClick={() => openApply(selectedJob)}>Apply for this Position</Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* --- APPLICATION FORM MODAL --- */}
+            <Dialog open={isApplyOpen} onOpenChange={setIsApplyOpen}>
+                <DialogContent className="glass-card bg-background/95 backdrop-blur-xl border-border max-w-lg max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-xl font-display">
                             Apply for {selectedJob?.title}
@@ -266,9 +330,7 @@ const Careers = () => {
                                 name="fullName"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-foreground">
-                                            Full Name *
-                                        </FormLabel>
+                                        <FormLabel className="text-foreground">Full Name *</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="John Doe"
@@ -326,9 +388,7 @@ const Careers = () => {
                                 name="resumeUrl"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-foreground">
-                                            Resume URL *
-                                        </FormLabel>
+                                        <FormLabel className="text-foreground">Resume URL *</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="https://drive.google.com/..."
@@ -346,9 +406,7 @@ const Careers = () => {
                                 name="coverLetter"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-foreground">
-                                            Cover Letter
-                                        </FormLabel>
+                                        <FormLabel className="text-foreground">Cover Letter</FormLabel>
                                         <FormControl>
                                             <Textarea
                                                 placeholder="Tell us why you're excited about this role..."
@@ -366,7 +424,7 @@ const Careers = () => {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={() => setSelectedJob(null)}
+                                    onClick={() => setIsApplyOpen(false)}
                                     className="flex-1"
                                 >
                                     Cancel
