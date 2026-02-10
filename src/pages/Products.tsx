@@ -175,10 +175,10 @@ const Products = () => {
                           </div>
                         ))}
                       </div>
-                      <Button className="w-full mt-6 glow-button bg-primary text-primary-foreground">
-                        Request Quote
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Button>
+                      {/*<Button className="w-full mt-6 glow-button bg-primary text-primary-foreground">*/}
+                      {/*  Request Quote*/}
+                      {/*  <ArrowRight className="ml-2 w-4 h-4" />*/}
+                      {/*</Button>*/}
                     </div>
                   </motion.div>
 

@@ -29,7 +29,7 @@ const footerLinks: Record<string, FooterLink[]> = {
 };
 
 const socialLinks = [
-  { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com" },
+  { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/sunroboticsandai/" },
   { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
   { name: "GitHub", icon: Github, href: "https://github.com" },
 ];

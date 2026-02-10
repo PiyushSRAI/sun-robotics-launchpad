@@ -7,6 +7,7 @@ const Index = () => {
   return (
     <>
       <Hero />
+
       <ServicesSummary />
       <Testimonials />
       <CTABanner />
