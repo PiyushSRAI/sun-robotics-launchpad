@@ -1,5 +1,10 @@
 //
-const API_BASE_URL = "http://localhost:8080/api";
+// const API_BASE_URL = "http://localhost:8080/api";
+// export const API_BASE_URL = import.meta.env.PROD
+//     ? "http://13.233.200.234:8080/api"  // AWS IP
+//     : "http://localhost:8080/api";
+
+export const API_URL = "http://13.233.200.234:8080/api";
 
 export interface Job {
     id?: number;
@@ -78,7 +83,7 @@ const getAuthHeaders = () => {
 export const api = {
     // --- AUTHENTICATION ---
     login: async (username: string, password: string) => {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
@@ -97,19 +102,19 @@ export const api = {
 
     // --- PUBLIC ENDPOINTS (No Token Needed) ---
     getJobs: async (): Promise<Job[]> => {
-        const response = await fetch(`${API_BASE_URL}/jobs`);
+        const response = await fetch(`${API_URL}/jobs`);
         if (!response.ok) throw new Error("Failed to fetch jobs");
         return response.json();
     },
 
     getJobById: async (id: string): Promise<Job> => {
-        const response = await fetch(`${API_BASE_URL}/jobs/${id}`);
+        const response = await fetch(`${API_URL}/jobs/${id}`);
         if (!response.ok) throw new Error("Failed to fetch job");
         return response.json();
     },
 
     applyForJob: async (data: ApplicationDTO) => {
-        const response = await fetch(`${API_BASE_URL}/applications/apply`, {
+        const response = await fetch(`${API_URL}/applications/apply`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -122,7 +127,7 @@ export const api = {
     },
 
     sendContactMessage: async (data: ContactDTO) => {
-        const response = await fetch(`${API_BASE_URL}/contact`, {
+        const response = await fetch(`${API_URL}/contact`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -133,13 +138,13 @@ export const api = {
 
     // --- BLOGS (Public) ---
     getBlogs: async (): Promise<Blog[]> => {
-        const response = await fetch(`${API_BASE_URL}/blogs`);
+        const response = await fetch(`${API_URL}/blogs`);
         if (!response.ok) throw new Error("Failed to fetch blogs");
         return response.json();
     },
 
     getBlogById: async (id: string): Promise<Blog> => {
-        const response = await fetch(`${API_BASE_URL}/blogs/${id}`);
+        const response = await fetch(`${API_URL}/blogs/${id}`);
         if (!response.ok) throw new Error("Failed to fetch blog");
         return response.json();
     },
@@ -148,7 +153,7 @@ export const api = {
 
     // Jobs
     getAllJobsAdmin: async (): Promise<Job[]> => {
-        const response = await fetch(`${API_BASE_URL}/admin/jobs`, {
+        const response = await fetch(`${API_URL}/admin/jobs`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) throw new Error("Failed to fetch admin jobs");
@@ -156,7 +161,7 @@ export const api = {
     },
 
     createJob: async (job: Job) => {
-        const response = await fetch(`${API_BASE_URL}/admin/jobs`, {
+        const response = await fetch(`${API_URL}/admin/jobs`, {
             method: "POST",
             headers: getAuthHeaders(),
             body: JSON.stringify(job),
@@ -166,7 +171,7 @@ export const api = {
     },
 
     updateJob: async (id: number, job: Job) => {
-        const response = await fetch(`${API_BASE_URL}/admin/jobs/${id}`, {
+        const response = await fetch(`${API_URL}/admin/jobs/${id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(job),
@@ -176,7 +181,7 @@ export const api = {
     },
 
     deleteJob: async (id: number) => {
-        const response = await fetch(`${API_BASE_URL}/admin/jobs/${id}`, {
+        const response = await fetch(`${API_URL}/admin/jobs/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders(),
         });
@@ -186,7 +191,7 @@ export const api = {
 
     // Applications
     getApplications: async (): Promise<Application[]> => {
-        const response = await fetch(`${API_BASE_URL}/admin/applications`, {
+        const response = await fetch(`${API_URL}/admin/applications`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) throw new Error("Failed to fetch applications");
@@ -194,7 +199,7 @@ export const api = {
     },
 
     updateApplicationStatus: async (id: number, status: string) => {
-        const response = await fetch(`${API_BASE_URL}/admin/applications/${id}/status`, {
+        const response = await fetch(`${API_URL}/admin/applications/${id}/status`, {
             method: "PATCH",
             headers: getAuthHeaders(),
             body: JSON.stringify({ status }),
@@ -205,7 +210,7 @@ export const api = {
 
     // Messages
     getMessages: async (): Promise<ContactMessage[]> => {
-        const response = await fetch(`${API_BASE_URL}/admin/messages`, {
+        const response = await fetch(`${API_URL}/admin/messages`, {
             headers: getAuthHeaders()
         });
         if (!response.ok) throw new Error("Failed to fetch messages");
@@ -213,7 +218,7 @@ export const api = {
     },
 
     markMessageRead: async (id: number) => {
-        const response = await fetch(`${API_BASE_URL}/admin/messages/${id}/read`, {
+        const response = await fetch(`${API_URL}/admin/messages/${id}/read`, {
             method: "PATCH",
             headers: getAuthHeaders(),
         });
@@ -222,7 +227,7 @@ export const api = {
     },
 
     deleteMessage: async (id: number) => {
-        const response = await fetch(`${API_BASE_URL}/admin/messages/${id}`, {
+        const response = await fetch(`${API_URL}/admin/messages/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders(),
         });
@@ -232,7 +237,7 @@ export const api = {
 
     // --- BLOGS (Admin) ---
     createBlog: async (blog: Blog) => {
-        const response = await fetch(`${API_BASE_URL}/admin/blogs`, {
+        const response = await fetch(`${API_URL}/admin/blogs`, {
             method: "POST",
             headers: getAuthHeaders(),
             body: JSON.stringify(blog),
@@ -242,7 +247,7 @@ export const api = {
     },
 
     updateBlog: async (id: number, blog: Blog) => {
-        const response = await fetch(`${API_BASE_URL}/admin/blogs/${id}`, {
+        const response = await fetch(`${API_URL}/admin/blogs/${id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(blog),
@@ -252,7 +257,7 @@ export const api = {
     },
 
     deleteBlog: async (id: number) => {
-        const response = await fetch(`${API_BASE_URL}/admin/blogs/${id}`, {
+        const response = await fetch(`${API_URL}/admin/blogs/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders(),
         });
