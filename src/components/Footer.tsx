@@ -24,14 +24,14 @@ const footerLinks: Record<string, FooterLink[]> = {
   legal: [
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Terms of Service", href: "/terms" },
-    { name: "Cookie Policy", href: "/privacy" },
+    // { name: "Cookie Policy", href: "/privacy" },
   ],
 };
 
 const socialLinks = [
   { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/sunroboticsandai/" },
-  { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
-  { name: "GitHub", icon: Github, href: "https://github.com" },
+  // { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
+  // { name: "GitHub", icon: Github, href: "https://github.com" },
 ];
 
 // Helper to determine if link has hash

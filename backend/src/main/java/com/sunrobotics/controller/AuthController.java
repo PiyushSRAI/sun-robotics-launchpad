@@ -44,8 +44,8 @@ public class AuthController {
 //        if(userRepository.findByUsername("admin").isPresent()) return "Admin already exists";
 //
 //        User admin = new User();
-//        admin.setUsername("admin");
-//        admin.setPassword(passwordEncoder.encode("admin123")); // CHANGE THIS PASSWORD
+//        admin.setUsername("sunrobotics");
+//        admin.setPassword(passwordEncoder.encode("Sunrobotics@2025")); // CHANGE THIS PASSWORD
 //        admin.setRole("ROLE_ADMIN");
 //        userRepository.save(admin);
 //        return "Admin user created";
