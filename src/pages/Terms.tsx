@@ -88,10 +88,10 @@ const Terms = () => {
                 <p className="leading-relaxed">
                   For questions about these Terms, contact us at{" "}
                   <a
-                    href="mailto:sunroboticsandai@gmail.com"
+                    href="mailto:info@sunroboticsandai.in"
                     className="text-primary hover:underline"
                   >
-                    sunroboticsandai@gmail.com
+                    info@sunroboticsandai.in
                   </a>
                   .
                 </p>

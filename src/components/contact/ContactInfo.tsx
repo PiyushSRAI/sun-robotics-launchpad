@@ -12,8 +12,8 @@ const defaultContactInfo: ContactInfoItem[] = [
   {
     icon: Mail,
     label: "Email",
-    value: "sunroboticsandai@gmail.com",
-    href: "mailto:sunroboticsandai@gmail.com",
+    value: "info@sunroboticsandai.in.",
+    href: "mailto:info@sunroboticsandai.in",
   },
   {
     icon: Phone,
@@ -25,7 +25,7 @@ const defaultContactInfo: ContactInfoItem[] = [
     icon: MapPin,
     label: "Address",
     value: "Indraprastha Tower, Rau, Indore, India",
-    href: "https://maps.google.com/?q=Indraprastha+Tower+Rau+Indore+India",
+    href: "https://maps.google.com/?q=Sun+Robotics+And+AI+Indraprastha+Tower+Rau+Indore+India",
   },
 ];
 

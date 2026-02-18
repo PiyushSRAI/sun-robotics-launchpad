@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Login is public
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/jobs/**").permitAll() // Viewing jobs is public
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/blogs/**").permitAll()
                         .requestMatchers("/api/applications/apply").permitAll() // Applying is public
                         .requestMatchers("/api/contact").permitAll() // Contact is public
                         .requestMatchers("/api/admin/**").authenticated() // ADMIN PANEL IS SECURED

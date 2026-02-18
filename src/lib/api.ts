@@ -12,6 +12,18 @@ export interface Job {
     active: boolean;
 }
 
+export interface Blog {
+    id?: number;
+    title: string;
+    excerpt: string;
+    content: string;
+    category: string;
+    author: string;
+    readTime: string;
+    imageUrl: string;
+    createdAt?: string;
+}
+
 export interface Application {
     id: number;
     job: Job;
@@ -119,6 +131,19 @@ export const api = {
         return response.json();
     },
 
+    // --- BLOGS (Public) ---
+    getBlogs: async (): Promise<Blog[]> => {
+        const response = await fetch(`${API_BASE_URL}/blogs`);
+        if (!response.ok) throw new Error("Failed to fetch blogs");
+        return response.json();
+    },
+
+    getBlogById: async (id: string): Promise<Blog> => {
+        const response = await fetch(`${API_BASE_URL}/blogs/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch blog");
+        return response.json();
+    },
+
     // --- ADMIN ENDPOINTS (Protected with Token) ---
 
     // Jobs
@@ -202,6 +227,36 @@ export const api = {
             headers: getAuthHeaders(),
         });
         if (!response.ok) throw new Error("Failed to delete message");
+        return response.json();
+    },
+
+    // --- BLOGS (Admin) ---
+    createBlog: async (blog: Blog) => {
+        const response = await fetch(`${API_BASE_URL}/admin/blogs`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify(blog),
+        });
+        if (!response.ok) throw new Error("Failed to create blog");
+        return response.json();
+    },
+
+    updateBlog: async (id: number, blog: Blog) => {
+        const response = await fetch(`${API_BASE_URL}/admin/blogs/${id}`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify(blog),
+        });
+        if (!response.ok) throw new Error("Failed to update blog");
+        return response.json();
+    },
+
+    deleteBlog: async (id: number) => {
+        const response = await fetch(`${API_BASE_URL}/admin/blogs/${id}`, {
+            method: "DELETE",
+            headers: getAuthHeaders(),
+        });
+        if (!response.ok) throw new Error("Failed to delete blog");
         return response.json();
     }
 };

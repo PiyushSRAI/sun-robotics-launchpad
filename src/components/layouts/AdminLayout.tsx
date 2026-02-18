@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Briefcase, FileText, Mail, LayoutDashboard, LogOut } from "lucide-react";
+import { Briefcase, FileText, Mail, LayoutDashboard, LogOut, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 
@@ -55,6 +55,11 @@ const AdminLayout = () => {
                     <Link to="/admin/messages">
                         <Button variant={isActive("/admin/messages") ? "secondary" : "ghost"} className="w-full justify-start gap-2">
                             <Mail className="h-4 w-4" /> Inbox
+                        </Button>
+                    </Link>
+                    <Link to="/admin/blogs">
+                        <Button variant={isActive("/admin/blogs") ? "secondary" : "ghost"} className="w-full justify-start gap-2">
+                            <BookOpen className="h-4 w-4" /> Manage Blogs
                         </Button>
                     </Link>
                 </nav>

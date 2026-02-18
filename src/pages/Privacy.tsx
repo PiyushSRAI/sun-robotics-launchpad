@@ -77,10 +77,10 @@ const Privacy = () => {
                   If you have any questions about this Privacy Policy, please
                   contact us at{" "}
                   <a
-                    href="mailto:sunroboticsandai@gmail.com"
+                    href="mailto:info@sunroboticsandai.in."
                     className="text-primary hover:underline"
                   >
-                    sunroboticsandai@gmail.com
+                      info@sunroboticsandai.in.
                   </a>
                   .
                 </p>

@@ -21,7 +21,8 @@ import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import Login from "./pages/admin/Login";
-
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import BlogPost from "./pages/BlogPost";
 // Admin Imports
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminJobs from "./pages/admin/AdminJobs";
@@ -65,6 +66,7 @@ const App = () => (
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:id" element={<BlogPost />} />
                         {/* Catch-all for public 404 */}
                         <Route path="*" element={<NotFound />} />
                     </Route>
@@ -78,6 +80,7 @@ const App = () => (
                         <Route path="jobs" element={<AdminJobs />} />
                         <Route path="applications" element={<AdminApplications />} />
                         <Route path="messages" element={<AdminMessages />} />
+                        <Route path="blogs" element={<AdminBlogs />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
