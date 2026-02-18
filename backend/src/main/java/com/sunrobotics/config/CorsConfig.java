@@ -9,7 +9,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8081", "http://localhost:5173") // Adjust to your frontend port
+                .allowedOrigins("http://localhost:8081", "http://localhost:5173",
+                        "https://sunroboticsandai.in",    // Your Main Domain
+                        "https://www.sunroboticsandai.in") // Adjust to your frontend port
                 .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
